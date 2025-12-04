@@ -80,11 +80,14 @@ def create_app():
     
     # Import blueprints AFTER mongo is initialized
     from api.auth.routes import auth_bp
-
+    from api.patients.routes import patients_bp
+    from api.dashboard.routes import dashboard_bp
     
     # Register Blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-       
+    app.register_blueprint(patients_bp, url_prefix='/api/patients')
+    app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
+    
     # Error handlers
     @app.errorhandler(404)
     def not_found(error):
