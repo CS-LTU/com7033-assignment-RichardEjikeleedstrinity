@@ -1,0 +1,448 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Patients - Stroke Prediction{% endblock %}
+
+{% block content %}
+<div class="px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+        <!-- Header Section -->
+        <div class="flex flex-wrap justify-between gap-3 p-4">
+            <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Patient List</p>
+            <a href="{{ url_for('patient.patient_form') }}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-medical-blue text-white text-sm font-medium leading-normal hover:bg-blue-700 transition-colors">
+                <span class="truncate">Add New Patient</span>
+            </a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="px-4 py-3">
+            <form method="GET" action="{{ url_for('patient.patient_list') }}">
+                <label class="flex flex-col min-w-40 h-12 w-full">
+                    <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                        <div class="text-hospital-text-light flex border-none bg-hospital-card items-center justify-center pl-4 rounded-l-lg border-r-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                            </svg>
+                        </div>
+                        <input
+                            name="search"
+                            placeholder="Search by patient ID, gender, or work type"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-hospital-card focus:border-none h-full placeholder:text-hospital-text-light px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+                            value="{{ search_query }}"
+                        />
+                    </div>
+                </label>
+                <input type="hidden" name="page" value="1">
+            </form>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="flex flex-wrap gap-4 p-4">
+            <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
+                <p class="text-white text-sm font-medium leading-normal">Total Patients</p>
+                <p class="text-white tracking-light text-xl font-bold leading-tight">{{ total_patients }}</p>
+            </div>
+            <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
+                <p class="text-white text-sm font-medium leading-normal">High Risk</p>
+                <p class="text-warning-orange tracking-light text-xl font-bold leading-tight">
+                    {{ high_risk_count }}
+                </p>
+            </div>
+            <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
+                <p class="text-white text-sm font-medium leading-normal">Stroke Cases</p>
+                <p class="text-warning-orange tracking-light text-xl font-bold leading-tight">
+                    {{ stroke_cases_count }}
+                </p>
+            </div>
+            <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
+                <p class="text-white text-sm font-medium leading-normal">Current Page</p>
+                <p class="text-white tracking-light text-xl font-bold leading-tight">
+                    {{ current_page }} of {{ total_pages }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Patients Table -->
+        <div class="px-4 py-3 @container">
+            <div class="flex overflow-x-auto rounded-lg border border-hospital-border bg-hospital-dark">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-hospital-input">
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='patient_id', order=sort_order if sort_field != 'patient_id' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Patient ID
+                                    {% if sort_field == 'patient_id' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='gender', order=sort_order if sort_field != 'gender' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Gender
+                                    {% if sort_field == 'gender' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='age', order=sort_order if sort_field != 'age' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Age
+                                    {% if sort_field == 'age' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='hypertension', order=sort_order if sort_field != 'hypertension' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Hypertension
+                                    {% if sort_field == 'hypertension' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='heart_disease', order=sort_order if sort_field != 'heart_disease' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Heart Disease
+                                    {% if sort_field == 'heart_disease' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='work_type', order=sort_order if sort_field != 'work_type' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Work Type
+                                    {% if sort_field == 'work_type' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='avg_glucose_level', order=sort_order if sort_field != 'avg_glucose_level' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Glucose Level
+                                    {% if sort_field == 'avg_glucose_level' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='bmi', order=sort_order if sort_field != 'bmi' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    BMI
+                                    {% if sort_field == 'bmi' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='smoking_status', order=sort_order if sort_field != 'smoking_status' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Smoking Status
+                                    {% if sort_field == 'smoking_status' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='stroke', order=sort_order if sort_field != 'stroke' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Stroke
+                                    {% if sort_field == 'stroke' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='risk_level', order=sort_order if sort_field != 'risk_level' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Risk Level
+                                    {% if sort_field == 'risk_level' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
+                                <a href="{{ url_for('patient.patient_list', page=current_page, sort='risk_score', order=sort_order if sort_field != 'risk_score' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
+                                    Risk Score
+                                    {% if sort_field == 'risk_score' %}
+                                        {% if sort_order == 'asc' %}
+                                            ↑
+                                        {% else %}
+                                            ↓
+                                        {% endif %}
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                        <tr class="border-t border-t-hospital-border hover:bg-hospital-card transition-colors">
+                            <!-- Patient ID -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ patient.patient_id }}
+                            </td>
+                            
+                            <!-- Gender -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ patient.gender }}
+                            </td>
+                            
+                            <!-- Age -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ patient.age }}
+                            </td>
+                            
+                            <!-- Hypertension -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {% if patient.hypertension == 1 %}
+                                    <span class="text-warning-orange">Yes</span>
+                                {% else %}
+                                    <span class="text-success-green">No</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Heart Disease -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {% if patient.heart_disease == 1 %}
+                                    <span class="text-warning-orange">Yes</span>
+                                {% else %}
+                                    <span class="text-success-green">No</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Work Type -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ patient.work_type }}
+                            </td>
+                            
+                            <!-- Glucose Level -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ "%.1f"|format(patient.avg_glucose_level) }}
+                            </td>
+                            
+                            <!-- BMI -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {% if patient.bmi %}
+                                    {{ "%.1f"|format(patient.bmi) }}
+                                {% else %}
+                                    <span class="text-hospital-text-light">N/A</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Smoking Status -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {{ patient.smoking_status }}
+                            </td>
+                            
+                            <!-- Stroke -->
+                            <td class="px-4 py-3 text-sm font-normal leading-normal whitespace-nowrap">
+                                {% if patient.stroke == 1 %}
+                                    <span class="text-warning-orange font-medium">Yes</span>
+                                {% else %}
+                                    <span class="text-success-green">No</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Risk Level -->
+                            <td class="px-4 py-3 text-sm font-medium leading-normal whitespace-nowrap">
+                                {% if patient.risk_level == 'High' %}
+                                    <span class="text-warning-orange">{{ patient.risk_level }}</span>
+                                {% elif patient.risk_level == 'Medium' %}
+                                    <span class="text-medical-amber">{{ patient.risk_level }}</span>
+                                {% elif patient.risk_level == 'Low' %}
+                                    <span class="text-success-green">{{ patient.risk_level }}</span>
+                                {% else %}
+                                    <span class="text-hospital-text-light">{{ patient.risk_level or 'N/A' }}</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Risk Score -->
+                            <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
+                                {% if patient.risk_score %}
+                                    {{ "%.1f"|format(patient.risk_score) }}%
+                                {% else %}
+                                    <span class="text-hospital-text-light">N/A</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Actions -->
+                            <td class="px-4 py-3 text-sm font-bold leading-normal tracking-[0.015em] whitespace-nowrap">
+                                <div class="flex gap-2">
+                                    <a href="{{ url_for('patient.patient_form', patient_id=patient._id) }}" 
+                                       class="text-success-green hover:text-green-400 transition-colors text-xs">Edit</a>
+                                    <span class="text-hospital-border">|</span>
+                                    <form method="POST" action="{{ url_for('patient.delete_patient', patient_id=patient._id) }}" 
+                                          class="inline" onsubmit="return confirm('Are you sure you want to delete this patient?')">
+                                        <button type="submit" class="text-warning-orange hover:text-red-400 transition-colors text-xs bg-transparent border-none cursor-pointer">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="13" class="px-4 py-8 text-center text-hospital-text-light text-sm font-normal leading-normal">
+                                {% if search_query %}
+                                    No patients found matching "{{ search_query }}". <a href="{{ url_for('patient.patient_list') }}" class="text-medical-blue hover:text-blue-400">Clear search</a>.
+                                {% else %}
+                                    No patients found. <a href="{{ url_for('patient.patient_form') }}" class="text-medical-blue hover:text-blue-400">Add your first patient</a>.
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination and Export -->
+        <div class="flex flex-wrap items-center justify-between p-4 gap-4">
+            <!-- Pagination Info -->
+            <div class="text-hospital-text-light text-sm font-normal leading-normal">
+                Showing {{ start_index }}-{{ end_index }} of {{ total_patients }} patients
+                {% if search_query %}
+                    matching "{{ search_query }}"
+                {% endif %}
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="flex items-center gap-2">
+                <!-- First Page -->
+                {% if current_page > 1 %}
+                    <a href="{{ url_for('patient.patient_list', page=1, sort=sort_field, order=sort_order, search=search_query, per_page=per_page) }}" 
+                       class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-text-light hover:bg-medical-blue hover:text-white transition-colors">
+                        &laquo;
+                    </a>
+                {% else %}
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-border cursor-not-allowed">
+                        &laquo;
+                    </span>
+                {% endif %}
+
+                <!-- Previous Page -->
+                {% if current_page > 1 %}
+                    <a href="{{ url_for('patient.patient_list', page=current_page-1, sort=sort_field, order=sort_order, search=search_query, per_page=per_page) }}" 
+                       class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-text-light hover:bg-medical-blue hover:text-white transition-colors">
+                        &lsaquo;
+                    </a>
+                {% else %}
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-border cursor-not-allowed">
+                        &lsaquo;
+                    </span>
+                {% endif %}
+
+                <!-- Page Numbers -->
+                {% for page_num in range([1, current_page-2]|max, [current_page+3, total_pages+1]|min) %}
+                    {% if page_num <= total_pages %}
+                        {% if page_num == current_page %}
+                            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-medical-blue text-white font-medium">
+                                {{ page_num }}
+                            </span>
+                        {% else %}
+                            <a href="{{ url_for('patient.patient_list', page=page_num, sort=sort_field, order=sort_order, search=search_query, per_page=per_page) }}" 
+                               class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-text-light hover:bg-medical-blue hover:text-white transition-colors">
+                                {{ page_num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Next Page -->
+                {% if current_page < total_pages %}
+                    <a href="{{ url_for('patient.patient_list', page=current_page+1, sort=sort_field, order=sort_order, search=search_query, per_page=per_page) }}" 
+                       class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-text-light hover:bg-medical-blue hover:text-white transition-colors">
+                        &rsaquo;
+                    </a>
+                {% else %}
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-border cursor-not-allowed">
+                        &rsaquo;
+                    </span>
+                {% endif %}
+
+                <!-- Last Page -->
+                {% if current_page < total_pages %}
+                    <a href="{{ url_for('patient.patient_list', page=total_pages, sort=sort_field, order=sort_order, search=search_query, per_page=per_page) }}" 
+                       class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-text-light hover:bg-medical-blue hover:text-white transition-colors">
+                        &raquo;
+                    </a>
+                {% else %}
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-hospital-card text-hospital-border cursor-not-allowed">
+                        &raquo;
+                    </span>
+                {% endif %}
+            </div>
+            
+            <!-- Export Button and Items Per Page -->
+            <div class="flex gap-3 items-center">
+                <!-- Items Per Page -->
+                <div class="flex items-center gap-2">
+                    <span class="text-hospital-text-light text-sm">Show:</span>
+                    <select onchange="changeItemsPerPage(this.value)" 
+                            class="bg-hospital-card border border-hospital-border rounded-lg px-2 py-1 text-white text-sm">
+                        <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                        <option value="25" {% if per_page == 25 %}selected{% endif %}>25</option>
+                        <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                    </select>
+                </div>
+
+                <!-- Export Button -->
+                <a href="" 
+                   class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-hospital-card text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-medical-blue transition-colors">
+                    <span class="truncate">Export CSV</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeItemsPerPage(perPage) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', perPage);
+    url.searchParams.set('page', '1'); // Reset to first page when changing items per page
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}

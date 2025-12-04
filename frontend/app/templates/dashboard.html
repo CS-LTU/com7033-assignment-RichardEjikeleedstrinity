@@ -1,0 +1,112 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Dashboard - Stroke Prediction{% endblock %}
+
+{% block content %}
+<div class="px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <!-- Welcome Section -->
+        <div class="flex flex-wrap justify-between gap-3 p-4">
+            <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Welcome, {{ user.name }}</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="flex flex-wrap gap-4 p-4">
+            <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 bg-hospital-card">
+                <p class="text-white text-base font-medium leading-normal">Total Patients</p>
+                <p class="text-white tracking-light text-2xl font-bold leading-tight">{{ stats.total_patients }}</p>
+    
+            </div>
+            <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 bg-hospital-card">
+                <p class="text-white text-base font-medium leading-normal">High Risk Patients</p>
+                <p class="text-white tracking-light text-2xl font-bold leading-tight">{{ stats.high_risk_patients }}</p>
+
+            </div>
+            <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-6 bg-hospital-card">
+                <p class="text-white text-base font-medium leading-normal">Today's Predictions</p>
+                <p class="text-white tracking-light text-2xl font-bold leading-tight">{{ stats.todays_predictions }}</p>
+
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Recent Activity</h2>
+        <div class="px-4 py-3 @container">
+            {% if recent_patients %}
+            <div class="flex overflow-hidden rounded-lg border border-hospital-border bg-hospital-dark">
+                <table class="flex-1">
+                    <thead>
+                        <tr class="bg-hospital-input">
+                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Patient ID</th>
+                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Name</th>
+                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Age</th>
+                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Gender</th>
+                            <th class="px-4 py-3 text-left text-white w-60 text-sm font-medium leading-normal">Risk Score</th>
+                            <th class="px-4 py-3 text-left text-white w-[400px] text-sm font-medium leading-normal">Prediction Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in recent_patients %}
+                        <tr class="border-t border-t-hospital-border">
+                            <td class="h-[72px] px-4 py-2 w-[400px] text-hospital-text-light text-sm font-normal leading-normal">{{ patient.id }}</td>
+                            <td class="h-[72px] px-4 py-2 w-[400px] text-white text-sm font-normal leading-normal">{{ patient.name }}</td>
+                            <td class="h-[72px] px-4 py-2 w-[400px] text-hospital-text-light text-sm font-normal leading-normal">{{ patient.age }}</td>
+                            <td class="h-[72px] px-4 py-2 w-[400px] text-hospital-text-light text-sm font-normal leading-normal">{{ patient.gender }}</td>
+                            <td class="h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
+                                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-hospital-card text-white text-sm font-medium leading-normal w-full hover:bg-hospital-border transition-colors">
+                                    <span class="truncate">{{ patient.risk_level }}</span>
+                                </button>
+                            </td>
+                            <td class="h-[72px] px-4 py-2 w-[400px] text-hospital-text-light text-sm font-normal leading-normal">{{ patient.prediction_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="flex items-center justify-center p-8 bg-hospital-dark rounded-lg border border-hospital-border">
+                <p class="text-hospital-text-light text-base font-normal leading-normal">No patient data available</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-stretch">
+            <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-start">
+                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-medical-blue text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-blue-700 transition-colors">
+                    <span class="truncate">Add Patient</span>
+                </button>
+                <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-hospital-card text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-hospital-border transition-colors">
+                    <span class="truncate">Run Batch Prediction</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Risk Distribution -->
+        <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Risk Distribution</h2>
+        <div class="flex flex-wrap gap-4 px-4 py-6">
+            <div class="flex min-w-72 flex-1 flex-col gap-2">
+                <p class="text-white text-base font-medium leading-normal">Risk Distribution</p>
+                <p class="text-white tracking-light text-[32px] font-bold leading-tight truncate">
+                    {{ (stats.risk_distribution.get('High', 0) + stats.risk_distribution.get('Medium', 0) + stats.risk_distribution.get('Low', 0)) }}
+                </p>
+                <div class="flex gap-1">
+                    <p class="text-hospital-text-light text-base font-normal leading-normal">Total Cases</p>
+                </div>
+                <div class="grid min-h-[180px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center px-3">
+                    {% set total_cases = stats.risk_distribution.get('High', 0) + stats.risk_distribution.get('Medium', 0) + stats.risk_distribution.get('Low', 0) %}
+                    {% set high_percent = (stats.risk_distribution.get('High', 0) / total_cases * 100) if total_cases > 0 else 0 %}
+                    {% set medium_percent = (stats.risk_distribution.get('Medium', 0) / total_cases * 100) if total_cases > 0 else 0 %}
+                    {% set low_percent = (stats.risk_distribution.get('Low', 0) / total_cases * 100) if total_cases > 0 else 0  %}
+                    <div class="border-hospital-text-light bg-hospital-card border-t-2 w-full h-[{{ high_percent }}%]" ></div>
+                    <p class="text-hospital-text-light text-[13px] font-bold leading-normal tracking-[0.015em]">High</p>
+                    <div class="border-hospital-text-light bg-hospital-card border-t-2 w-full h-[{{ medium_percent }}%]" ></div>
+                    <p class="text-hospital-text-light text-[13px] font-bold leading-normal tracking-[0.015em]">Medium</p>
+                    <div class="border-hospital-text-light bg-hospital-card border-t-2 w-full  h-[{{ low_percent }}%]" style="height:  low_percent "></div>
+                    <p class="text-hospital-text-light text-[13px] font-bold leading-normal tracking-[0.015em]">Low</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
