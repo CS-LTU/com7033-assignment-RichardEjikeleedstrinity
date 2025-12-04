@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-jwt-extended
+flask-wtf
+flask-talisman
+flask-limiter
+werkzeug
+python-dotenv
+bcrypt
+wtforms
+requests
