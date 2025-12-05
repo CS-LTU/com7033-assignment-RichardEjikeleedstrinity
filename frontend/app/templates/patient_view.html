@@ -5,71 +5,87 @@
 {% block content %}
 <div class="px-40 flex flex-1 justify-center py-5">
     <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <!-- Page Header -->
         <h2 class="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] px-4 pb-5">Patient Details</h2>
         
+        <!-- Patient Details Card -->
         <div class="bg-hospital-dark rounded-lg p-6 shadow-lg">
             <div class="grid grid-cols-2 gap-6">
+                <!-- Patient ID -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Patient ID</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.patient_id }}</p>
                 </div>
+                <!-- Name -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Name</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.name }}</p>
                 </div>
+                <!-- Age -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Age</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.age }}</p>
                 </div>
+                <!-- Gender -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Gender</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.gender }}</p>
                 </div>
+                <!-- Hypertension -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Hypertension</p>
                     <p class="text-white text-lg font-bold leading-normal">
                         {{ 'Yes' if patient.hypertension == 1 else 'No' }}
                     </p>
                 </div>
+                <!-- Heart Disease -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Heart Disease</p>
                     <p class="text-white text-lg font-bold leading-normal">
                         {{ 'Yes' if patient.heart_disease == 1 else 'No' }}
                     </p>
                 </div>
+                <!-- Marital Status -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Marital Status</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.ever_married }}</p>
                 </div>
+                <!-- Work Type -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Work Type</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.work_type }}</p>
                 </div>
+                <!-- Residence Type -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Residence Type</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.Residence_type }}</p>
                 </div>
+                <!-- Average Glucose Level -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Average Glucose Level</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.avg_glucose_level }}</p>
                 </div>
+                <!-- BMI -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">BMI</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.bmi }}</p>
                 </div>
+                <!-- Risk Level -->
                 <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Risk Level</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.risk_level }}</p>
                 </div>
-                         <div>
+                <!-- Smoking Status -->
+                <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Smoking Status</p>
                     <p class="text-white text-lg font-bold leading-normal">{{ patient.smoking_status }}</p>
                 </div>
-                <div >
+                <!-- Risk Score -->
+                <div>
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Risk Score</p>
                     <p class="text-white text-lg font-normal leading-normal">{{ patient.risk_score }}</p>
                 </div>
-               
+                <!-- Notes -->
                 <div class="col-span-2">
                     <p class="text-hospital-text-light text-sm font-medium leading-normal">Notes</p>
                     <p class="text-white text-lg font-normal leading-normal">{{ patient.notes }}</p>
@@ -77,6 +93,7 @@
             </div>
         </div>
 
+        <!-- Back Button -->
         <div class="flex justify-end gap-4 mt-6">
             <a href="{{ url_for('patient.patient_list') }}" class="btn btn-primary px-6 py-2 rounded-lg bg-medical-blue text-white font-bold hover:bg-blue-700 transition-colors">
                 Back to Patient List

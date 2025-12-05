@@ -5,8 +5,10 @@
 {% block content %}
 <div class="px-40 flex flex-1 justify-center py-5">
     <div class="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 flex-1">
+        <!-- Page Header -->
         <h2 class="text-white tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">Create an Account</h2>
         
+        <!-- Display flashed messages (e.g., errors or success messages) -->
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="flex px-4 py-3">
@@ -19,10 +21,12 @@
             {% endif %}
         {% endwith %}
 
+        <!-- Registration Form -->
         <form method="POST">
-            <!-- Add this hidden CSRF token field -->
+            <!-- CSRF Token for security -->
             {{ form.csrf_token }}
             
+            <!-- First Name Field -->
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                     <p class="text-white text-base font-medium leading-normal pb-2">First Name</p>
@@ -37,6 +41,7 @@
                 </label>
             </div>
 
+            <!-- Last Name Field -->
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                     <p class="text-white text-base font-medium leading-normal pb-2">Last Name</p>
@@ -51,6 +56,7 @@
                 </label>
             </div>
 
+            <!-- Email Field -->
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                     <p class="text-white text-base font-medium leading-normal pb-2">Email</p>
@@ -65,6 +71,7 @@
                 </label>
             </div>
 
+            <!-- Password Field -->
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                     <p class="text-white text-base font-medium leading-normal pb-2">Password</p>
@@ -79,6 +86,7 @@
                 </label>
             </div>
 
+            <!-- Confirm Password Field -->
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
                 <label class="flex flex-col min-w-40 flex-1">
                     <p class="text-white text-base font-medium leading-normal pb-2">Confirm Password</p>
@@ -93,6 +101,7 @@
                 </label>
             </div>
 
+            <!-- Submit Button -->
             <div class="flex px-4 py-3">
                 <button
                     type="submit"
@@ -103,6 +112,7 @@
             </div>
         </form>
 
+        <!-- Link to Login Page -->
         <p class="text-hospital-text-light text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
             Already have an account? <a href="{{ url_for('auth.login') }}" class="underline hover:text-white transition-colors">Log in</a>
         </p>

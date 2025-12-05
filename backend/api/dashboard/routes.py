@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from datetime import datetime, timedelta
 
-from flask_pymongo import PyMongo
+
 from api.help_utils.mongodb import mongo
 
 dashboard_bp = Blueprint('dashboard', __name__)

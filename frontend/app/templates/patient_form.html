@@ -6,6 +6,7 @@
 <div class="gap-1 px-6 flex flex-1 justify-center py-5">
     <!-- Left Sidebar - Patient Search -->
     <div class="layout-content-container flex flex-col w-80">
+        <!-- Header for Patient Form -->
         <div class="flex flex-wrap justify-between gap-3 p-4">
             <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Patient Form</p>
         </div>
@@ -18,7 +19,7 @@
                     placeholder="Search by name or ID"
                     class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border border-hospital-border bg-hospital-input focus:border-medical-blue h-14 placeholder:text-hospital-text-light p-[15px] text-base font-normal leading-normal transition-colors"
                     value=""
-            />
+                />
             </label>
         </div>
 
@@ -26,9 +27,11 @@
         <div class="space-y-2">
             {% for existing_patient in existing_patients %}
             <div class="flex items-center gap-4 bg-hospital-dark px-4 min-h-[72px] py-2 rounded-lg border border-hospital-border hover:border-medical-blue transition-colors cursor-pointer">
+                <!-- Patient Age as Avatar -->
                 <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-14 bg-hospital-card flex items-center justify-center text-white font-bold">
                 {{ existing_patient.age }} 
                 </div>
+                <!-- Patient Details -->
                 <div class="flex flex-col justify-center">
                     <p class="text-white text-base font-medium leading-normal line-clamp-1">{{ existing_patient.work_type }}</p>
                     <p class="text-hospital-text-light text-sm font-normal leading-normal line-clamp-2">ID: {{ existing_patient.patient_id }}</p>
@@ -40,12 +43,14 @@
 
     <!-- Right Side - Patient Form -->
     <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <!-- Header for Add/Edit Patient -->
         <div class="flex flex-wrap justify-between gap-3 p-4">
             <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">
                 {{ 'Edit Patient' if patient else 'Add New Patient' }}
             </p>
         </div>
 
+        <!-- Patient Form -->
         <form method="POST" class="space-y-4">
             {{ form.csrf_token }}
             <!-- Demographics Section -->
@@ -218,9 +223,11 @@
             <!-- Action Buttons -->
             <div class="flex justify-stretch">
                 <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-end">
+                    <!-- Cancel Button -->
                     <a href="{{ url_for('patient.patient_list') }}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-hospital-card text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-hospital-border transition-colors">
                         <span class="truncate">Cancel</span>
                     </a>
+                    <!-- Save/Update Button -->
                     <button type="submit" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-medical-blue text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-blue-700 transition-colors">
                         <span class="truncate">{{ 'Update' if patient else 'Save' }} Patient</span>
                     </button>

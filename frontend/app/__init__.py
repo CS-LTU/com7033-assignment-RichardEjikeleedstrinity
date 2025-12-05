@@ -2,8 +2,7 @@ from datetime import timedelta
 import os
 import secrets
 from flask import Flask
-from app.models_all.user_models import db
-from app.mongodb_service import mongo_service
+
 from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address

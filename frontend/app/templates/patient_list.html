@@ -8,6 +8,7 @@
         <!-- Header Section -->
         <div class="flex flex-wrap justify-between gap-3 p-4">
             <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Patient List</p>
+            <!-- Add New Patient Button -->
             <a href="{{ url_for('patient.patient_form') }}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-medical-blue text-white text-sm font-medium leading-normal hover:bg-blue-700 transition-colors">
                 <span class="truncate">Add New Patient</span>
             </a>
@@ -18,11 +19,13 @@
             <form method="GET" action="{{ url_for('patient.patient_list') }}">
                 <label class="flex flex-col min-w-40 h-12 w-full">
                     <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                        <!-- Search Icon -->
                         <div class="text-hospital-text-light flex border-none bg-hospital-card items-center justify-center pl-4 rounded-l-lg border-r-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
                                 <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
                             </svg>
                         </div>
+                        <!-- Search Input -->
                         <input
                             name="search"
                             placeholder="Search by patient ID, gender, or work type"
@@ -37,22 +40,26 @@
 
         <!-- Stats Overview -->
         <div class="flex flex-wrap gap-4 p-4">
+            <!-- Total Patients -->
             <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
                 <p class="text-white text-sm font-medium leading-normal">Total Patients</p>
                 <p class="text-white tracking-light text-xl font-bold leading-tight">{{ total_patients }}</p>
             </div>
+            <!-- High Risk Patients -->
             <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
                 <p class="text-white text-sm font-medium leading-normal">High Risk</p>
                 <p class="text-warning-orange tracking-light text-xl font-bold leading-tight">
                     {{ high_risk_count }}
                 </p>
             </div>
+            <!-- Stroke Cases -->
             <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
                 <p class="text-white text-sm font-medium leading-normal">Stroke Cases</p>
                 <p class="text-warning-orange tracking-light text-xl font-bold leading-tight">
                     {{ stroke_cases_count }}
                 </p>
             </div>
+            <!-- Current Page -->
             <div class="flex min-w-[180px] flex-1 flex-col gap-2 rounded-lg p-4 bg-hospital-card">
                 <p class="text-white text-sm font-medium leading-normal">Current Page</p>
                 <p class="text-white tracking-light text-xl font-bold leading-tight">
@@ -67,6 +74,8 @@
                 <table class="min-w-full">
                     <thead>
                         <tr class="bg-hospital-input">
+                            <!-- Table Headers with Sorting -->
+                            <!-- Patient ID -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='patient_id', order=sort_order if sort_field != 'patient_id' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Patient ID
@@ -79,6 +88,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Gender -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='gender', order=sort_order if sort_field != 'gender' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Gender
@@ -91,6 +101,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Age -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='age', order=sort_order if sort_field != 'age' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Age
@@ -103,6 +114,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Hypertension -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='hypertension', order=sort_order if sort_field != 'hypertension' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Hypertension
@@ -115,6 +127,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Heart Disease -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='heart_disease', order=sort_order if sort_field != 'heart_disease' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Heart Disease
@@ -127,6 +140,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Work Type -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='work_type', order=sort_order if sort_field != 'work_type' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Work Type
@@ -139,6 +153,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Glucose Level -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='avg_glucose_level', order=sort_order if sort_field != 'avg_glucose_level' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Glucose Level
@@ -151,6 +166,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- BMI -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='bmi', order=sort_order if sort_field != 'bmi' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     BMI
@@ -163,6 +179,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Smoking Status -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='smoking_status', order=sort_order if sort_field != 'smoking_status' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Smoking Status
@@ -175,6 +192,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Stroke -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='stroke', order=sort_order if sort_field != 'stroke' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Stroke
@@ -187,6 +205,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Risk Level -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='risk_level', order=sort_order if sort_field != 'risk_level' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Risk Level
@@ -199,6 +218,7 @@
                                     {% endif %}
                                 </a>
                             </th>
+                            <!-- Risk Score -->
                             <th class="px-4 py-3 text-left text-white text-sm font-medium leading-normal whitespace-nowrap">
                                 <a href="{{ url_for('patient.patient_list', page=current_page, sort='risk_score', order=sort_order if sort_field != 'risk_score' else ('asc' if sort_order == 'desc' else 'desc'), search=search_query) }}" class="flex items-center gap-1 hover:text-medical-blue transition-colors">
                                     Risk Score
@@ -217,7 +237,7 @@
                     <tbody>
                         {% for patient in patients %}
                         <tr class="border-t border-t-hospital-border hover:bg-hospital-card transition-colors">
-                            <!-- Patient ID -->
+                            <!-- Patient Data Rows -->
                             <td class="px-4 py-3 text-hospital-text-light text-sm font-normal leading-normal whitespace-nowrap">
                                 {{ patient.patient_id }}
                             </td>
@@ -321,6 +341,7 @@
                             </td>
                         </tr>
                         {% else %}
+                        <!-- No Patients Found -->
                         <tr>
                             <td colspan="13" class="px-4 py-8 text-center text-hospital-text-light text-sm font-normal leading-normal">
                                 {% if search_query %}
@@ -345,7 +366,6 @@
                     matching "{{ search_query }}"
                 {% endif %}
             </div>
-            
             <!-- Pagination Controls -->
             <div class="flex items-center gap-2">
                 <!-- First Page -->

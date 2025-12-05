@@ -9,3 +9,4 @@ python-dotenv
 bcrypt
 wtforms
 requests
+flask_sqlalchemy

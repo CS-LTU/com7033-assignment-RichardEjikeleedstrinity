@@ -2,14 +2,18 @@
 import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from app.services.api_client import api_client, login_required
-from bson import ObjectId
+
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import FloatField, IntegerField, SelectField, validators
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from app.utils.validators import sanitize_input
+
+# Blueprint for patient-related routes
 patient_bp = Blueprint('patient', __name__)
 
+# Form for creating or editing a patient
 class PatientForm(FlaskForm):
     gender = SelectField('Gender', choices=[
         ('Male', 'Male'), 
@@ -50,7 +54,7 @@ class PatientForm(FlaskForm):
     ])
 
 
-
+# Route to display the patient list
 @patient_bp.route('/patients')
 @login_required
 def patient_list():
@@ -92,6 +96,7 @@ def patient_list():
                          start_index=start_index,
                          end_index=end_index)
 
+# Route to create or edit a patient
 @patient_bp.route('/patient/new', methods=['GET', 'POST'])
 @patient_bp.route('/patient/edit/<string:patient_id>', methods=['GET', 'POST'])
 @login_required
@@ -142,9 +147,7 @@ def patient_form(patient_id=None):
                 # Show the created patient's data
                 created_patient = response.get("patient_data", {})
                 flash(f'Patient created successfully! ID: {created_patient.get("patient_id", "Unknown")}', 'success')
-                flash(f'Patient created successfully! ID: {created_patient}', 'success')
                 return render_template('patient_view.html', patient=created_patient, user=session['user'])
-        
             else:
                 flash(f'Error creating patient: {response["error"]}', 'error')
 
@@ -161,6 +164,7 @@ def patient_form(patient_id=None):
                            form=form,
                            user=session['user'])
 
+# Route to delete a patient
 @patient_bp.route('/patient/delete/<string:patient_id>', methods=['POST'])
 @login_required
 def delete_patient(patient_id):
@@ -168,13 +172,13 @@ def delete_patient(patient_id):
     response = api_client.delete_patient(patient_id)
     
     if 'error' not in response:
-        
         flash('Patient deleted successfully!', 'success')
     else:
         flash(f'Error deleting patient: {response["error"]}', 'error')
     
     return redirect(url_for('patient.patient_list'))
 
+# Route to view a patient's details
 @patient_bp.route('/patient/view/<string:patient_id>')
 @login_required
 def view_patient(patient_id):

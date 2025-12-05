@@ -8,6 +8,7 @@ class BackendAPIClient:
     """Python client to communicate with your backend API"""
     
     def __init__(self, base_url='http://localhost:3000/api'):
+        # Initialize the API client with the base URL
         self.base_url = base_url
     
     def _get_headers(self, additional_headers=None):
@@ -86,9 +87,9 @@ class BackendAPIClient:
         """Get single patient"""
         return self._make_request('GET', f'/patients/{patient_id}')
     
-    def get_patient_all(self,):
-        """Get single patient"""
-        return self._make_request('GET', f'/patients/all')
+    def get_patient_all(self):
+        """Get all patients"""
+        return self._make_request('GET', '/patients/all')
     
     def create_patient(self, patient_data):
         """Create new patient"""
@@ -107,11 +108,12 @@ class BackendAPIClient:
         """Get dashboard statistics"""
         return self._make_request('GET', '/dashboard/stats')
 
-# Create a global instance
+# Create a global instance of the API client
 api_client = BackendAPIClient()
 
 # Decorator to require login
 def login_required(f):
+    """Decorator to enforce login for protected routes"""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'logged_in' not in session or not session['logged_in']:
